@@ -16,16 +16,16 @@
                                 <i class="fa fa-paperclip"></i> 
                                 {$_L['Attach File']}
                             </a> 
+                            <span id="uploaded"></span>
                             </div>
                         </div>
                     </div>                    
 
 
                     <div class="form-group">
-                        <div class="col-lg-offset-2 col-lg-10">
-                            <button class="btn btn-primary" type="submit" id="submit">
-                            <i class="fa fa-check"></i> {$_L['Submit']}
-                            </button>
+                        <div class="col-sm-offset-3 col-sm-9">
+                            <input type="hidden" name="attachments" id="attachments" value="">
+                            <button type="submit" id="submit" class="btn btn-primary"><i class="fa fa-check"></i> {$_L['Submit']}</button>
                         </div>
                     </div>
                 </form>

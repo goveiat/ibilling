@@ -1,18 +1,18 @@
 <?php
-/* Smarty version 3.1.30, created on 2017-07-10 14:42:01
+/* Smarty version 3.1.30, created on 2017-07-10 17:31:40
   from "/var/www/html/ibilling/application/plugins/conciliation/views/load.tpl" */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   'version' => '3.1.30',
-  'unifunc' => 'content_5963ca79c3cce4_90959655',
+  'unifunc' => 'content_5963f23cd3e6a0_48251026',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
     '727a69341392b6e639c877f5e8ce80b7c4599b8b' => 
     array (
       0 => '/var/www/html/ibilling/application/plugins/conciliation/views/load.tpl',
-      1 => 1499712120,
+      1 => 1499722255,
       2 => 'file',
     ),
   ),
@@ -20,7 +20,7 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   array (
   ),
 ),false)) {
-function content_5963ca79c3cce4_90959655 (Smarty_Internal_Template $_smarty_tpl) {
+function content_5963f23cd3e6a0_48251026 (Smarty_Internal_Template $_smarty_tpl) {
 ?>
 <div class="row">
 
@@ -43,17 +43,17 @@ conciliation/init/load_bank_statement/" method="post">
                                 <?php echo $_smarty_tpl->tpl_vars['_L']->value['Attach File'];?>
 
                             </a> 
+                            <span id="uploaded"></span>
                             </div>
                         </div>
                     </div>                    
 
 
                     <div class="form-group">
-                        <div class="col-lg-offset-2 col-lg-10">
-                            <button class="btn btn-primary" type="submit" id="submit">
-                            <i class="fa fa-check"></i> <?php echo $_smarty_tpl->tpl_vars['_L']->value['Submit'];?>
-
-                            </button>
+                        <div class="col-sm-offset-3 col-sm-9">
+                            <input type="hidden" name="attachments" id="attachments" value="">
+                            <button type="submit" id="submit" class="btn btn-primary"><i class="fa fa-check"></i> <?php echo $_smarty_tpl->tpl_vars['_L']->value['Submit'];?>
+</button>
                         </div>
                     </div>
                 </form>
