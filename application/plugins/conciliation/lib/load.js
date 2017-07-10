@@ -5,14 +5,13 @@ $(document).ready(function () {
 
     var _url = $("#_url").val();
 
-    var upload_resp;
+    var response;
 
     var $ib_form_submit = $("#submit");
 
 
 
-    var ib_file = new Dropzone("#upload_container",
-        {
+    var ib_file = new Dropzone("#upload_container", {
             url: _url + "conciliation/init/handle_attachment/",
             maxFiles: 1,
             acceptedFiles: ".ofx"
@@ -24,30 +23,28 @@ $(document).ready(function () {
         $ib_form_submit.prop('disabled', true);
     });
 
+
+
     ib_file.on("success", function(file,response) {
 
         $ib_form_submit.prop('disabled', false);
 
-        console.log(file,response)
+        console.log(response)
 
-        upload_resp = response;
+        if(response.success){
 
-        if(upload_resp.success){
-
-            toastr.success(upload_resp.msg);
+            toastr.success(response.msg);
 
             $('#attachments').val(function(i,val) {
-                return val + (!val ? '' : ',') + upload_resp.file;
+                return val + (!val ? '' : ',') + response.file;
             });
 
             $('#uploaded').text(function(i,val) {
                 return val + (!val ? '' : ',') + file.name;
             });            
-
-
         }
         else{
-            toastr.error(upload_resp.msg);
+            toastr.error(response.msg);
         }
 
 

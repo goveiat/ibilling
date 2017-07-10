@@ -1,7 +1,8 @@
 <?php
  
 _auth();
- require "i18n/$config[language].php";
+ include_once "i18n/$config[language].php";
+ include_once "OfxParser/Parser.php";
 
 $ui->assign('_application_menu', 'conciliation');
 $ui->assign('_title', 'Conciliation'.' - '. $config['CompanyName']);
@@ -10,11 +11,12 @@ $action = $routes['2'];
 $user = User::_info();
 $ui->assign('user', $user);
 define('CONCILIATION_URL', APP_URL.'/application/plugins/conciliation');
-define('BANK_STATEMENTS', 'application/storage/conciliation/');
+define('BANK_STATEMENTS_PATH', 'application/storage/conciliation/');
 
  
 switch ($action) {
     case 'load':
+        
         $ui->assign('_include','load');
         $ui->assign('_L',$_L);
 
@@ -33,16 +35,31 @@ switch ($action) {
 
         $uploader = new Uploader();
 
-        if (!file_exists(BANK_STATEMENTS)) {
-            mkdir(BANK_STATEMENTS, 0777, true);
+        if (!file_exists(BANK_STATEMENTS_PATH)) {
+            mkdir(BANK_STATEMENTS_PATH, 0777, true);
         }   
              
-        $uploader->setDir(BANK_STATEMENTS);
+        $uploader->setDir(BANK_STATEMENTS_PATH);
         $uploader->sameName(false);
         $uploader->setExtensions(array('ofx'));
-        if($uploader->uploadFile('file')){ 
+        $dados = [];
+        if($uploader->uploadFile('file')){           
             $file  = $uploader->getUploadName(); 
-            $msg = 'Uploaded Successfully';
+
+            $ofxParser = new Parser();
+            try{
+                $ofx = $ofxParser->loadFromFile(BANK_STATEMENTS_PATH . $file);
+                $bankAccount = reset($ofx->bankAccounts);
+                $dados[startDate] = $bankAccount->statement->startDate;
+                $dados[endDate] = $bankAccount->statement->endDate;
+                $dados[transactions] = $bankAccount->statement->transactions;   
+                $dados[bankAccount] = $bankAccount;              
+            }catch(Exception $e){
+                $dados = $e->getMessage();
+            }
+             
+
+            $msg = $_L[upload_success];
             $success = true;
         }else{
             $file = '';
@@ -50,11 +67,13 @@ switch ($action) {
             $success = false;
         }
 
-        $ret = array(
-            'success' => $success,
-            'msg' =>$msg,
-            'file' =>$file
-        );
+        $ret = [
+            success => $success,
+            msg => $msg,
+            file => $file,
+            dados => $dados,
+            path => BANK_STATEMENTS_PATH . $file
+        ];
 
         header('Content-Type: application/json');
 
