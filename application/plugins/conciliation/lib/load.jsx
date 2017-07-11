@@ -7,9 +7,20 @@ let styles = {
 }
 
 
-var ItemConciliacao = function({desc, ordem, valor, data, id}){
-	let classe = Number(valor) > 0 ? 'text-success' : 'text-danger';
-	return (
+class ItemConciliacao extends React.Component{
+
+	constructor(props) {
+	  super(props);
+	  this.state = {
+	    classe: 'info',
+	    cursor: 'not-allowed',
+	  };
+	}
+
+	render(){
+		let {desc, ordem, valor, data, id} = this.props;
+		let classe = Number(valor) > 0 ? 'text-success' : 'text-danger';
+		return (
 			<div className="row">
 				<div className="col-sm-6">
 					<div className="panel panel-info">
@@ -30,13 +41,25 @@ var ItemConciliacao = function({desc, ordem, valor, data, id}){
 					</div>
 				</div>
 				<div className="col-sm-6" >
-					<div className="alert alert-info" style={{height: 133, textAlign: 'center', display: 'table', width:'100%'}}>
+					<div 
+					onMouseOver={() => {
+						if(this.props.sel){
+							this.setState({classe: 'warning', cursor: 'pointer'})
+						}						
+					}}
+					onMouseOut={() => {
+						if(this.props.sel){
+							this.setState({classe: 'info', cursor: 'not-allowed'})
+						}
+					}}
+					className={`alert alert-${this.state.classe}`} style={{height: 133, textAlign: 'center', display: 'table', width:'100%', cursor: this.state.cursor}}>
 						<p style={{ display: 'table-cell', verticalAlign: 'middle' }}>Empty</p>
 					</div>
 				</div>
 			</div>
 		
-	)
+		)		
+	}
 }
 
 
@@ -97,25 +120,13 @@ class ItemManual extends React.Component{
 
 }
 
-/*
-				<div className="panel-footer">
-					<div className="row">
-						<div className="col-sm-6">
-							<span className="label label-primary">{ordem+1}</span>
-						</div>	
-						<div className="col-sm-6" style={{textAlign: 'right'}}>
-							<input type="checkbox" className="react-toggle" value="Keep" />
-						</div>				
-					</div>
-				</div>	
- */
 
 class ListaConciliacao extends React.Component{
 
 	constructor(props) {
 	  super(props);
 	  this.state = {
-	    sel: null,
+	    sel: false,
 	  };
 	}
 
@@ -155,6 +166,7 @@ class ListaConciliacao extends React.Component{
 					data = data[2] + '/' + data[1] + '/' + data[0];					
 					return <ItemConciliacao 
 						key={k} 
+						sel={this.state.sel}
 						ordem={k} 
 						valor={item.amount}
 						data={data}
