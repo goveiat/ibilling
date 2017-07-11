@@ -9,7 +9,7 @@
 
 
                     <div class="form-group">
-                        <label for="description" class="col-sm-3 control-label">{$_L['Bank_Statement']}</label>
+                        <label for="description" class="col-sm-2 control-label">{$_L['Bank_Statement']}</label>
                         <div class="col-sm-9">
                             <div class="help-block">
                             <a data-toggle="modal" href="#modal_add_item">
@@ -19,15 +19,20 @@
                             <span id="uploaded"></span>
                             </div>
                         </div>
-                    </div>  
+                    </div>
+                    <div class="form-group">
+                        <label for="description" class="col-sm-2 control-label">{$_L['conciliation']}</label>
+                        <div class="col-sm-9">
+                            <div class="help-block" id="emptyOfx">{$_L['empty_ofx']}</div>
+                            <div id="transacoes"></div>
+                        </div>
+                    </div>                        
+
+                   
+
 
                     <div class="form-group">
-                        <div id="transacoes"></div>
-                    </div>                    
-
-
-                    <div class="form-group">
-                        <div class="col-sm-offset-3 col-sm-9">
+                        <div class="col-sm-offset-2 col-sm-10">
                             <input type="hidden" name="attachments" id="attachments" value="">
                             <button type="submit" id="submit" class="btn btn-primary"><i class="fa fa-check"></i> {$_L['Submit']}</button>
                         </div>

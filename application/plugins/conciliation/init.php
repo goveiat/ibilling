@@ -55,39 +55,44 @@ switch ($action) {
         $uploader->setExtensions(array('ofx'));
         $dados = [];
         if($uploader->uploadFile('file')){           
-            $file  = $uploader->getUploadName(); 
-
-            $ofxParser = new Parser();
             try{
+                $file  = $uploader->getUploadName();
+                $ofxParser = new Parser();                
                 $ofx = $ofxParser->loadFromFile(BANK_STATEMENTS_PATH . $file);
                 $dados = reset($ofx->bankAccounts);  
                 $d = ORM::for_table('app_conciliation')->create();
                 $d->ofx_json_bank_account = json_encode($dados);   
+                $d->file_name = $file;   
                 $d->save();
-                $tid = $d->id();
-                _log('New Bank Statement Upload: [TrID: '.$tid.']','Admin',$user['id']);
-                // _msglog('s',$_L['Transaction Added Successfully']);
-                $trans = ORM::for_table('sys_transactions')->where_raw('`date` between ? and ?', [$dados->statement->startDate->date, $dados->statement->endDate->date])->find_array();
-            }catch(Exception $e){
-                $dados = $e->getMessage();
-            }
-             
 
-            $msg = $_L[upload_success];
-            $success = true;
+                _log('New Bank Statement Upload: [TrID: '.$tid.']','Admin',$user['id']);
+
+                $tid = $d->id();
+                $ag = str_replace($dados->agencyNumber[0], '-', '');
+                $numConta = $ag .';'. str_replace($dados->accountNumber[0], '-', '');                
+                
+                $trans = ORM::for_table('sys_transactions')
+                    ->join('sys_accounts', array('sys_accounts.account', 'LIKE', 'sys_transactions.account'))
+                    ->where_raw('sys_transactions.date between ? and ?', [$dados->statement->startDate->date, $dados->statement->endDate->date])
+                    ->where_like('sys_accounts.account_number', $numConta)
+                    ->find_array();
+
+                $ret = [
+                    success => true,
+                    msg => $_L[upload_success],
+                    file => $file,
+                    ofx => $dados,
+                    transManual => $trans
+                ];
+
+            }catch(Exception $e){
+                $ret = [success => false, msg => $e->getMessage()];
+            }
+
         }else{
-            $file = '';
-            $msg = $uploader->getMessage();
-            $success = false;
+            $ret = [success => false, msg => $uploader->getMessage()];
         }
 
-        $ret = [
-            success => $success,
-            msg => $msg,
-            file => $file,
-            dados => $dados,
-            path => $trans
-        ];
 
         header('Content-Type: application/json');
 

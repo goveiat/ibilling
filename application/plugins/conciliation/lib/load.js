@@ -32,11 +32,14 @@ $(document).ready(function () {
         console.log(response)
 
         if(response.success){
-
+            $("#emptyOfx").css('display', 'none');
             toastr.success(response.msg);
 
             ReactDOM.render(
-              React.createElement(ListaConciliacao, {ofx: response.dados}, null),
+              React.createElement(ListaConciliacao, {
+                ofx: response.ofx, 
+                transManual: response.transManual
+              }, null),
               document.getElementById('transacoes')
             );            
 
