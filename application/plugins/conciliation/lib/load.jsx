@@ -20,10 +20,11 @@ class ItemConciliacao extends React.Component{
 	render(){
 		let {desc, ordem, valor, data, id} = this.props;
 		let classe = Number(valor) > 0 ? 'text-success' : 'text-danger';
+		let classePanel = typeof this.props.conciliated == 'undefined' ? "info" : "success";
 		return (
 			<div className="row">
 				<div className="col-sm-6">
-					<div className="panel panel-info">
+					<div className={`panel panel-${classePanel}`}>
 					  <div className="panel-heading" style={styles.tit}>
 					  {desc}
 					  </div>
@@ -40,25 +41,62 @@ class ItemConciliacao extends React.Component{
 					  </div>		  
 					</div>
 				</div>
-				<div className="col-sm-6" >
-					<div 
-					onMouseOver={() => {
-						if(this.props.sel){
-							this.setState({classe: 'warning', cursor: 'pointer'})
-						}						
-					}}
-					onMouseOut={() => {
-						if(this.props.sel){
-							this.setState({classe: 'info', cursor: 'not-allowed'})
-						}
-					}}
-					className={`alert alert-${this.state.classe}`} style={{height: 133, textAlign: 'center', display: 'table', width:'100%', cursor: this.state.cursor}}>
-						<p style={{ display: 'table-cell', verticalAlign: 'middle' }}>Empty</p>
-					</div>
-				</div>
+				{this.showConciliated()}
 			</div>
 		
 		)		
+	}
+
+
+	showConciliated(){
+		if (typeof this.props.conciliated == 'undefined') {
+			return (
+				<div className="col-sm-6" >
+					<div 
+						onMouseOver={() => {
+							if(this.props.sel != null){
+								this.setState({classe: 'warning', cursor: 'pointer'})
+							}						
+						}}
+						onMouseOut={() => {
+							if(this.props.sel != null){
+								this.setState({classe: 'info', cursor: 'not-allowed'})
+							}
+						}}
+						onClick={() => {this.props.onConciliate(this.props.ordem)}}
+						className={`alert alert-${this.state.classe}`} style={{height: 133, textAlign: 'center', display: 'table', width:'100%', cursor: this.state.cursor}}>
+						<p style={{ display: 'table-cell', verticalAlign: 'middle' }}>Empty</p>
+					</div>
+				</div>
+			)
+		} else {
+			let item = this.props.conciliated;
+			let data = item.date.split("-");
+			data = data[2] + '/' + data[1] + '/' + data[0];
+			let val = item.type == 'Expense' ? -item.amount : item.amount;
+			val = Number(val);
+			let classe = Number(val) > 0 ? 'text-success' : 'text-danger';
+			return (
+				<div className="col-sm-6" >
+					<div className={`panel panel-success`}>
+					  <div className="panel-heading" style={styles.tit}>
+					  {item.description}
+					  </div>
+					  <div className="panel-body">
+						<div className={`col-sm-12 ${classe}`}>
+						 	<span style={styles.label}>Valor: </span>R$ {val.toFixed(2)}
+						</div>
+						<div className="col-sm-12">
+							<span style={styles.label}>Data: </span>{data}
+						</div>
+						<div className="col-sm-12">
+							<span style={styles.label}>Identificação: </span>{parseInt(item.id,10)}
+						</div>
+					  </div>		  
+					</div>					
+				</div>
+			)	
+		}
 	}
 }
 
@@ -73,7 +111,7 @@ class ItemManual extends React.Component{
 	}
 
 	componentWillReceiveProps(next){
-		if(next.sel != this.props.id){
+		if(next.sel != this.props.ordem){
 			this.setState({classe: 'info'})
 		}
 	}
@@ -82,38 +120,36 @@ class ItemManual extends React.Component{
 		let {desc, ordem, valor, data, id} = this.props;
 		let classe = Number(valor) > 0 ? 'text-success' : 'text-danger';
 
-		return (
-			<div className="col-sm-4" >
-					<div 
-					style={{cursor: 'pointer'}}
-					onMouseOver={() => {
-						if(this.props.sel != id){
-							this.setState({classe: 'warning'})
-						}						
-					}}
-					onMouseOut={() => {
-						if(this.props.sel != id){
-							this.setState({classe: 'info'})
-						}
-					}}
-					onClick={() => {this.props.onSelect(id)}}
-					className={`panel panel-${this.state.classe}`}>
-					  <div className="panel-heading" style={styles.tit}>
-					  {desc}
-					  </div>
-					  <div className="panel-body">
-						<div className={`col-sm-12 ${classe}`}>
-						 	<span style={styles.label}>Valor: </span>R$ {valor.toFixed(2)}
-						</div>
-						<div className="col-sm-12">
-							<span style={styles.label}>Data: </span>{data}
-						</div>
-						<div className="col-sm-12">
-							<span style={styles.label}>Identificação: </span>{parseInt(id,10)}
-						</div>
-					  </div>		  
-					</div>
+		return (			
+			<div 
+			style={{cursor: 'pointer'}}
+			onMouseOver={() => {
+				if(this.props.sel != ordem){
+					this.setState({classe: 'warning'})
+				}						
+			}}
+			onMouseOut={() => {
+				if(this.props.sel != ordem){
+					this.setState({classe: 'info'})
+				}
+			}}
+			onClick={() => {this.props.onSelect(ordem)}}
+			className={`panel panel-${this.state.classe}`}>
+			  <div className="panel-heading" style={styles.tit}>
+			  {desc}
+			  </div>
+			  <div className="panel-body">
+				<div className={`col-sm-12 ${classe}`}>
+				 	<span style={styles.label}>Valor: </span>R$ {valor.toFixed(2)}
 				</div>
+				<div className="col-sm-12">
+					<span style={styles.label}>Data: </span>{data}
+				</div>
+				<div className="col-sm-12">
+					<span style={styles.label}>Identificação: </span>{parseInt(id,10)}
+				</div>
+			  </div>		  
+			</div>
 			
 		)		
 	}
@@ -125,15 +161,31 @@ class ListaConciliacao extends React.Component{
 
 	constructor(props) {
 	  super(props);
+
 	  this.state = {
-	    sel: false,
+	    sel: null,
+	    conciliated: {},
+	    transManual: props.transManual,
 	  };
 	}
 
 
-	onSelect(item){
-		this.setState({sel: item})
+	onSelect(kManual){
+		this.setState({sel: kManual})
 	}
+
+	onConciliate(kOfx){
+		if(this.state.sel != null){
+			let {sel, conciliated, transManual} = this.state;
+			conciliated[kOfx] = transManual[sel];
+
+			transManual[sel] = null;
+
+			this.setState({sel: null, conciliated, transManual});
+		}
+	}
+
+
 
 	render(){	
 		
@@ -172,6 +224,8 @@ class ListaConciliacao extends React.Component{
 						data={data}
 						id={item.checkNumber[0]}
 						desc={item.memo} 
+						conciliated={this.state.conciliated[k]}
+						onConciliate={(kOfx)=>{this.onConciliate(kOfx)}}
 					/>
 			});
 		}else{
@@ -180,24 +234,31 @@ class ListaConciliacao extends React.Component{
 	}
 
 	loadListTransManual(){
-		let {transManual} = this.props;
+		let {transManual} = this.state;
 		let data = null;
 		let val = null;
 		if(transManual.length > 0){
 			return transManual.map((item, k) => {
+				if(!item){
+					return null;
+				}
 				val = item.type == 'Expense' ? -item.amount : item.amount;
 				data = item.date.split("-");
 				data = data[2] + '/' + data[1] + '/' + data[0];	
-				return <ItemManual
-					onSelect={(item) => {this.onSelect(item)}}
-					sel={this.state.sel}
-					key={k} 
-					ordem={false} 
-					valor={Number(val)}
-					data={data}
-					id={item.id}
-					desc={item.description} 
-				/>
+				return (
+					<div key={k}  className="col-sm-4" >
+						<ItemManual
+							onSelect={(item) => {this.onSelect(item)}}
+							sel={this.state.sel}							
+							ordem={k} 
+							valor={Number(val)}
+							data={data}
+							id={item.id}
+							desc={item.description} 
+						/>
+					</div>
+				)
+					
 			});
 		}else{
 			return <div className="alert alert-danger">There are no manual changes regarding the period and account of this statement</div>
