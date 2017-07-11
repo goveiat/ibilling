@@ -1,7 +1,6 @@
 <?php
 $t = new Schema('app_conciliation');
-$t->add('title');
-$t->add('contents');
+$t->add('ofx_json_bank_account');
 $t->save();
 
 

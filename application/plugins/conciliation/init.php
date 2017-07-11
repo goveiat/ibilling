@@ -49,11 +49,13 @@ switch ($action) {
             $ofxParser = new Parser();
             try{
                 $ofx = $ofxParser->loadFromFile(BANK_STATEMENTS_PATH . $file);
-                $bankAccount = reset($ofx->bankAccounts);
-                $dados[startDate] = $bankAccount->statement->startDate;
-                $dados[endDate] = $bankAccount->statement->endDate;
-                $dados[transactions] = $bankAccount->statement->transactions;   
-                $dados[bankAccount] = $bankAccount;              
+                $dados = reset($ofx->bankAccounts);  
+                $d = ORM::for_table('app_conciliation')->create();
+                $d->ofx_json_bank_account = json_encode($dados);   
+                $d->save();
+                $tid = $d->id();
+                _log('New Bank Statement Upload: [TrID: '.$tid.']','Admin',$user['id']);
+                _msglog('s',$_L['Transaction Added Successfully']);
             }catch(Exception $e){
                 $dados = $e->getMessage();
             }
