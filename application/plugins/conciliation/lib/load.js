@@ -35,6 +35,11 @@ $(document).ready(function () {
 
             toastr.success(response.msg);
 
+            ReactDOM.render(
+              React.createElement(ListaConciliacao, {ofx: response.dados}, null),
+              document.getElementById('transacoes')
+            );            
+
             $('#attachments').val(function(i,val) {
                 return val + (!val ? '' : ',') + response.file;
             });
@@ -54,3 +59,5 @@ $(document).ready(function () {
 
  
 });
+
+

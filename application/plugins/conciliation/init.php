@@ -23,7 +23,18 @@ switch ($action) {
         $css = Asset::css(array('dropzone/dropzone','modal'));
         $js = Asset::js(array('modal','dropzone/dropzone'));
 
-        $js .= '<script type="text/javascript" src="'.CONCILIATION_URL.'/lib/load.js"></script>';
+
+        if($_SERVER['HTTP_HOST'] == 'localhost'){
+            $js .= '<script src="https://unpkg.com/react@15/dist/react.js"></script>
+                    <script src="https://unpkg.com/react-dom@15/dist/react-dom.js"></script>';
+        }else{
+            $js .= '<script src="https://unpkg.com/react@15/dist/react.min.js"></script>
+                    <script src="https://unpkg.com/react-dom@15/dist/react-dom.min.js"></script>';
+        }
+
+        $js .= '<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
+                <script type="text/babel" src="'.CONCILIATION_URL.'/lib/load.jsx"></script>
+                <script type="text/javascript" src="'.CONCILIATION_URL.'/lib/load.js"></script>';        
 
         $ui->assign('xheader', $css);        
         $ui->assign('xfooter', $js);

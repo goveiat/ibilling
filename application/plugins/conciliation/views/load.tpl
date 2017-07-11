@@ -19,6 +19,10 @@
                             <span id="uploaded"></span>
                             </div>
                         </div>
+                    </div>  
+
+                    <div class="form-group">
+                        <div id="transacoes"></div>
                     </div>                    
 
 
