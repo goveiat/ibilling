@@ -43,9 +43,7 @@ $(document).ready(function () {
               document.getElementById('transacoes')
             );            
 
-            $('#attachments').val(function(i,val) {
-                return val + (!val ? '' : ',') + response.file;
-            });
+            $('#attachments').val(response.id);
 
             $('#uploaded').text(function(i,val) {
                 return val + (!val ? '' : ',') + file.name;

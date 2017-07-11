@@ -5,7 +5,7 @@
         <div class="panel panel-default">
             <div class="panel-body">
 
-                <form class="form-horizontal" action="{$_url}conciliation/init/load_bank_statement/" method="post">
+                <form class="form-horizontal" action="{$_url}conciliation/init/conciliate/" method="post">
 
 
                     <div class="form-group">
@@ -32,8 +32,9 @@
 
 
                     <div class="form-group">
-                        <div class="col-sm-offset-2 col-sm-10">
+                        <div class="col-sm-offset-6 col-sm-10">
                             <input type="hidden" name="attachments" id="attachments" value="">
+                            <input type="hidden" name="conciliated" id="conciliated" value="">
                             <button type="submit" id="submit" class="btn btn-primary"><i class="fa fa-check"></i> {$_L['Submit']}</button>
                         </div>
                     </div>

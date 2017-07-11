@@ -165,6 +165,7 @@ class ListaConciliacao extends React.Component{
 	  this.state = {
 	    sel: null,
 	    conciliated: {},
+	    conciliatedForm: {},
 	    transManual: props.transManual,
 	  };
 	}
@@ -176,12 +177,14 @@ class ListaConciliacao extends React.Component{
 
 	onConciliate(kOfx){
 		if(this.state.sel != null){
-			let {sel, conciliated, transManual} = this.state;
+			let {sel, conciliated, transManual, conciliatedForm} = this.state;
 			conciliated[kOfx] = transManual[sel];
+			conciliatedForm[kOfx] = transManual[sel]['id'];
 
 			transManual[sel] = null;
 
-			this.setState({sel: null, conciliated, transManual});
+			this.setState({sel: null, conciliated, transManual, conciliatedForm});
+			$('#conciliated').val(JSON.stringify(conciliatedForm));
 		}
 	}
 

@@ -65,10 +65,10 @@ switch ($action) {
                 $d->ofx_json_bank_account = json_encode($dados);   
                 $d->file_name = $file;   
                 $d->save();
+                $id = $d->id();
 
-                _log('New Bank Statement Upload: [TrID: '.$tid.']','Admin',$user['id']);
-
-                $tid = $d->id();
+                _log('New Bank Statement Upload: [ID: '.$id.']','Admin',$user['id']);
+                
                 $ag = str_replace('-', '', $dados->agencyNumber[0]);
                 $numConta = $ag .';'. str_replace('-', '', $dados->accountNumber[0]);         
                 $date = [$dados->statement->startDate->date, $dados->statement->endDate->date];       
@@ -78,6 +78,7 @@ switch ($action) {
                     ->join('sys_accounts', array('a.account', 'LIKE', 't.account'), 'a')
                     ->where_raw('t.date between ? and ?', $date)
                     ->where_like('a.account_number', $numConta)
+                    ->where('t.attachments', '')
                     ->select_many('t.id', 't.amount', 't.type', 't.date', 't.description', 't.account', 'a.account_number')
                     ->find_array();
 
@@ -87,6 +88,7 @@ switch ($action) {
                     file => $file,
                     ofx => $dados,
                     transManual => $trans,
+                    id=>$id
                 ];
 
             }catch(Exception $e){
@@ -103,6 +105,67 @@ switch ($action) {
         echo json_encode($ret);   
 
         break;
+
+    case 'conciliate':
+        $id = _post('attachments');
+        $conc = json_decode(_post('conciliated'));
+
+        if($id == ''){
+           r2(U.'conciliation/init/load/','e','The Bank Statement upload is Required');
+        }
+        
+
+        $bStat = ORM::for_table('app_conciliation')->where('id', $id)->find_one();
+        $ofx = json_decode($bStat['ofx_json_bank_account']);
+        $trans = $ofx->statement->transactions;
+
+        $ag = str_replace('-', '', $ofx->agencyNumber->{0});
+        $numConta = $ag .';'. str_replace('-', '', $ofx->accountNumber->{0}); 
+        $conta = ORM::for_table('sys_accounts')
+            ->table_alias('a')
+            ->where_like('a.account_number', $numConta)
+            ->select_many('a.id', 'a.account', 'a.account_number')
+            ->find_one();
+           
+
+        foreach ($trans as $key => $value) {            
+            if(property_exists($conc, $key)){                
+                try{
+                    $d = ORM::for_table('sys_transactions')->find_one($conc->{$key});
+                    $d->ref = $value->checkNumber->{0};
+                    $d->attachments = $id;
+                    $d->save(); 
+                }catch(Exception $e){
+                    exit($e->getMessage());
+                }                
+            }else{
+                try{
+                    $data = explode(" ", $value->date->date);
+                    $d = ORM::for_table('sys_transactions')->create();
+                    $d->account = $conta['account'];   
+                    $d->type = $value->amount < 0 ? 'Expense' : 'Income';   
+                    $d->dr = $value->amount < 0 ? abs($value->amount) : 0;   
+                    $d->cr = $value->amount < 0 ? 0 : abs($value->amount);   
+                    $d->amount = abs($value->amount);                  
+                    $d->description = $value->memo;   
+                    $d->category = 'Uncategorized';   
+                    $d->payer = '';   
+                    $d->payee = '';   
+                    $d->method = '';   
+                    $d->tags = '';   
+                    $d->updated_at = date("Y-m-d H:i:s");   
+                    $d->aid = 0;   
+                    $d->date = $data[0];     
+                    $d->ref = $value->checkNumber->{0};
+                    $d->attachments = $id;     
+                    $d->save(); 
+                }catch(Exception $e){
+                    exit($e->getMessage());
+                }               
+            }
+        }
+        r2(U.'conciliation/init/load/','s',$_L[success_conciliate]);
+    break;
     default:
         echo 'action not defined';
 }
