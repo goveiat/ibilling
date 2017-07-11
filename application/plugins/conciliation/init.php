@@ -126,6 +126,10 @@ switch ($action) {
             ->where_like('a.account_number', $numConta)
             ->select_many('a.id', 'a.account', 'a.account_number')
             ->find_one();
+
+        if(!$conta){
+            r2(U.'conciliation/init/load/','e','The account of the statement is not registered');
+        }
            
         $msg = [
             conc => 0,
