@@ -68,13 +68,16 @@ switch ($action) {
                 _log('New Bank Statement Upload: [TrID: '.$tid.']','Admin',$user['id']);
 
                 $tid = $d->id();
-                $ag = str_replace($dados->agencyNumber[0], '-', '');
-                $numConta = $ag .';'. str_replace($dados->accountNumber[0], '-', '');                
+                $ag = str_replace('-', '', $dados->agencyNumber[0]);
+                $numConta = $ag .';'. str_replace('-', '', $dados->accountNumber[0]);         
+                $date = [$dados->statement->startDate->date, $dados->statement->endDate->date];       
                 
                 $trans = ORM::for_table('sys_transactions')
-                    ->join('sys_accounts', array('sys_accounts.account', 'LIKE', 'sys_transactions.account'))
-                    ->where_raw('sys_transactions.date between ? and ?', [$dados->statement->startDate->date, $dados->statement->endDate->date])
-                    ->where_like('sys_accounts.account_number', $numConta)
+                    ->table_alias('t')
+                    ->join('sys_accounts', array('a.account', 'LIKE', 't.account'), 'a')
+                    ->where_raw('t.date between ? and ?', $date)
+                    ->where_like('a.account_number', $numConta)
+                    ->select_many('t.id', 't.amount', 't.type', 't.date', 't.description', 't.account', 'a.account_number')
                     ->find_array();
 
                 $ret = [
@@ -82,7 +85,7 @@ switch ($action) {
                     msg => $_L[upload_success],
                     file => $file,
                     ofx => $dados,
-                    transManual => $trans
+                    transManual => $trans,
                 ];
 
             }catch(Exception $e){
