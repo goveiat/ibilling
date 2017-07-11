@@ -66,7 +66,8 @@ switch ($action) {
                 $d->save();
                 $tid = $d->id();
                 _log('New Bank Statement Upload: [TrID: '.$tid.']','Admin',$user['id']);
-                _msglog('s',$_L['Transaction Added Successfully']);
+                // _msglog('s',$_L['Transaction Added Successfully']);
+                $trans = ORM::for_table('sys_transactions')->where_raw('`date` between ? and ?', [$dados->statement->startDate->date, $dados->statement->endDate->date])->find_array();
             }catch(Exception $e){
                 $dados = $e->getMessage();
             }
@@ -85,7 +86,7 @@ switch ($action) {
             msg => $msg,
             file => $file,
             dados => $dados,
-            path => BANK_STATEMENTS_PATH . $file
+            path => $trans
         ];
 
         header('Content-Type: application/json');
