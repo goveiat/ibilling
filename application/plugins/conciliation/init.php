@@ -59,7 +59,8 @@ switch ($action) {
                 $file  = $uploader->getUploadName();
                 $ofxParser = new Parser();                
                 $ofx = $ofxParser->loadFromFile(BANK_STATEMENTS_PATH . $file);
-                $dados = reset($ofx->bankAccounts);  
+                $dados = reset($ofx->bankAccounts); 
+                $dados->bank = $ofx->signOn->institute->name;
                 $d = ORM::for_table('app_conciliation')->create();
                 $d->ofx_json_bank_account = json_encode($dados);   
                 $d->file_name = $file;   

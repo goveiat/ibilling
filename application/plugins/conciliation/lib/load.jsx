@@ -20,7 +20,7 @@ class ItemConciliacao extends React.Component{
 	render(){
 		let {desc, ordem, valor, data, id} = this.props;
 		let classe = Number(valor) > 0 ? 'text-success' : 'text-danger';
-		let classePanel = typeof this.props.conciliated == 'undefined' ? "info" : "success";
+		let classePanel = typeof this.props.conciliated == 'undefined' ? "info" : "warning";
 		return (
 			<div className="row">
 				<div className="col-sm-6">
@@ -78,19 +78,19 @@ class ItemConciliacao extends React.Component{
 			let classe = Number(val) > 0 ? 'text-success' : 'text-danger';
 			return (
 				<div className="col-sm-6" >
-					<div className={`panel panel-success`}>
+					<div className={`panel panel-warning`}>
 					  <div className="panel-heading" style={styles.tit}>
 					  {item.description}
 					  </div>
 					  <div className="panel-body">
 						<div className={`col-sm-12 ${classe}`}>
-						 	<span style={styles.label}>Valor: </span>R$ {val.toFixed(2)}
+						 	<span style={styles.label}>Value: </span>R$ {val.toFixed(2)}
 						</div>
 						<div className="col-sm-12">
-							<span style={styles.label}>Data: </span>{data}
+							<span style={styles.label}>Date: </span>{data}
 						</div>
 						<div className="col-sm-12">
-							<span style={styles.label}>Identificação: </span>{parseInt(item.id,10)}
+							<span style={styles.label}>Identification: </span>{parseInt(item.id,10)}
 						</div>
 					  </div>		  
 					</div>					
@@ -140,13 +140,13 @@ class ItemManual extends React.Component{
 			  </div>
 			  <div className="panel-body">
 				<div className={`col-sm-12 ${classe}`}>
-				 	<span style={styles.label}>Valor: </span>R$ {valor.toFixed(2)}
+				 	<span style={styles.label}>Value: </span>R$ {valor.toFixed(2)}
 				</div>
 				<div className="col-sm-12">
-					<span style={styles.label}>Data: </span>{data}
+					<span style={styles.label}>Date: </span>{data}
 				</div>
 				<div className="col-sm-12">
-					<span style={styles.label}>Identificação: </span>{parseInt(id,10)}
+					<span style={styles.label}>Identification: </span>{parseInt(id,10)}
 				</div>
 			  </div>		  
 			</div>
@@ -192,18 +192,60 @@ class ListaConciliacao extends React.Component{
 		return (
 			<section >
 			  <fieldset>
+			    <legend>Bank Statement</legend>
+			    <div  style={styles.containerList}>
+				{this.loadBankStatement()}
+				</div>
+			  </fieldset>			
+			  <fieldset>
 			    <legend>Manual Entry</legend>
-				<div className="col-sm-12" style={styles.containerList}>
+				<div className="row" style={styles.containerList}>
 					{this.loadListTransManual()}
 				</div>
 			  </fieldset>	
 			  <fieldset>
 			    <legend>Bank Statement</legend>
-				<div className="col-sm-12" style={styles.containerList}>
+				<div  style={styles.containerList}>
 					{this.loadListTransOfx()}
 				</div>
 			  </fieldset>				
 			</section>
+		)
+	}
+
+	loadBankStatement(){
+		let {agencyNumber, accountNumber, balance, statement, bank} = this.props.ofx;
+		let start = statement.startDate.date.split(" ");
+					start = start[0].split("-");
+					start = start[2] + '/' + start[1] + '/' + start[0];
+		let end = statement.endDate.date.split(" ");
+					end = end[0].split("-");
+					end = end[2] + '/' + end[1] + '/' + end[0];					
+		balance = Number(balance[0]);
+		return (
+			<div className="row" style={{marginBottom: 20}}>
+				<div className="col-sm-4">
+					<span style={styles.label}>Agency Number: </span>{agencyNumber[0]}
+				</div>
+				<div className="col-sm-4">
+					<span style={styles.label}>Account Number: </span>{accountNumber[0]}
+				</div>	
+				<div className="col-sm-4">
+					<span style={styles.label}>Bank: </span>{bank[0]}
+				</div>				
+				<div className="col-sm-4">
+					<span style={styles.label}>Balance: </span>R$ {balance.toFixed(2)}
+				</div>
+				<div className="col-sm-4">
+					<span style={styles.label}>Start Date: </span>{start}
+				</div>	
+				<div className="col-sm-4">
+					<span style={styles.label}>End Date: </span>{end}
+				</div>	
+				<div className="col-sm-4">
+					<span style={styles.label}>Transactions: </span>{statement.transactions.length}
+				</div>
+			</div>
 		)
 	}
 
