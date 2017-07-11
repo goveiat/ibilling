@@ -127,10 +127,15 @@ switch ($action) {
             ->select_many('a.id', 'a.account', 'a.account_number')
             ->find_one();
            
-
+        $msg = [
+            conc => 0,
+            novos => 0,
+            exist => 0
+        ];
         foreach ($trans as $key => $value) {            
             if(property_exists($conc, $key)){                
                 try{
+                    $msg['conc']++;
                     $d = ORM::for_table('sys_transactions')->find_one($conc->{$key});
                     $d->ref = $value->checkNumber->{0};
                     $d->attachments = $id;
@@ -140,31 +145,38 @@ switch ($action) {
                 }                
             }else{
                 try{
-                    $data = explode(" ", $value->date->date);
-                    $d = ORM::for_table('sys_transactions')->create();
-                    $d->account = $conta['account'];   
-                    $d->type = $value->amount < 0 ? 'Expense' : 'Income';   
-                    $d->dr = $value->amount < 0 ? abs($value->amount) : 0;   
-                    $d->cr = $value->amount < 0 ? 0 : abs($value->amount);   
-                    $d->amount = abs($value->amount);                  
-                    $d->description = $value->memo;   
-                    $d->category = 'Uncategorized';   
-                    $d->payer = '';   
-                    $d->payee = '';   
-                    $d->method = '';   
-                    $d->tags = '';   
-                    $d->updated_at = date("Y-m-d H:i:s");   
-                    $d->aid = 0;   
-                    $d->date = $data[0];     
-                    $d->ref = $value->checkNumber->{0};
-                    $d->attachments = $id;     
-                    $d->save(); 
+                    $m = ORM::for_table('sys_transactions')->where('ref', $value->checkNumber->{0})->find_one();
+                    if(!$m){
+                        $msg['novos']++;
+                        $data = explode(" ", $value->date->date);
+                        $d = ORM::for_table('sys_transactions')->create();
+                        $d->account = $conta['account'];   
+                        $d->type = $value->amount < 0 ? 'Expense' : 'Income';   
+                        $d->dr = $value->amount < 0 ? abs($value->amount) : 0;   
+                        $d->cr = $value->amount < 0 ? 0 : abs($value->amount);   
+                        $d->amount = abs($value->amount);                  
+                        $d->description = $value->memo;   
+                        $d->category = 'Uncategorized';   
+                        $d->payer = '';   
+                        $d->payee = '';   
+                        $d->method = '';   
+                        $d->tags = '';   
+                        $d->updated_at = date("Y-m-d H:i:s");   
+                        $d->aid = 0;   
+                        $d->date = $data[0];     
+                        $d->ref = $value->checkNumber->{0};
+                        $d->attachments = $id;     
+                        $d->save(); 
+                    }else{
+                        $msg['exist']++;
+                    }                    
                 }catch(Exception $e){
                     exit($e->getMessage());
                 }               
             }
         }
-        r2(U.'conciliation/init/load/','s',$_L[success_conciliate]);
+        $info = $msg['conc'].' concilied records, '.$msg['novos'].' new records ans '. $msg['exist'].' existing records.';
+        r2(U.'conciliation/init/load/','s',$info);
     break;
     default:
         echo 'action not defined';
