@@ -38,7 +38,8 @@ $(document).ready(function () {
             ReactDOM.render(
               React.createElement(ListaConciliacao, {
                 ofx: response.ofx, 
-                transManual: response.transManual
+                transManual: response.transManual,
+                lang: response.lang
               }, null),
               document.getElementById('transacoes')
             );            

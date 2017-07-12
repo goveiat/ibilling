@@ -1,18 +1,18 @@
 <?php
-/* Smarty version 3.1.30, created on 2017-07-10 17:31:40
+/* Smarty version 3.1.30, created on 2017-07-12 10:06:22
   from "/var/www/html/ibilling/application/plugins/conciliation/views/load.tpl" */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   'version' => '3.1.30',
-  'unifunc' => 'content_5963f23cd3e6a0_48251026',
+  'unifunc' => 'content_59661ece35d855_74312393',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
     '727a69341392b6e639c877f5e8ce80b7c4599b8b' => 
     array (
       0 => '/var/www/html/ibilling/application/plugins/conciliation/views/load.tpl',
-      1 => 1499722255,
+      1 => 1499864759,
       2 => 'file',
     ),
   ),
@@ -20,7 +20,7 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   array (
   ),
 ),false)) {
-function content_5963f23cd3e6a0_48251026 (Smarty_Internal_Template $_smarty_tpl) {
+function content_59661ece35d855_74312393 (Smarty_Internal_Template $_smarty_tpl) {
 ?>
 <div class="row">
 
@@ -30,11 +30,11 @@ function content_5963f23cd3e6a0_48251026 (Smarty_Internal_Template $_smarty_tpl)
             <div class="panel-body">
 
                 <form class="form-horizontal" action="<?php echo $_smarty_tpl->tpl_vars['_url']->value;?>
-conciliation/init/load_bank_statement/" method="post">
+conciliation/init/conciliate/" method="post">
 
 
                     <div class="form-group">
-                        <label for="description" class="col-sm-3 control-label"><?php echo $_smarty_tpl->tpl_vars['_L']->value['Bank_Statement'];?>
+                        <label for="description" class="col-sm-2 control-label"><?php echo $_smarty_tpl->tpl_vars['_L']->value['p_concil_bank_statement'];?>
 </label>
                         <div class="col-sm-9">
                             <div class="help-block">
@@ -46,12 +46,24 @@ conciliation/init/load_bank_statement/" method="post">
                             <span id="uploaded"></span>
                             </div>
                         </div>
-                    </div>                    
+                    </div>
+                    <div class="form-group">
+                        <label for="description" class="col-sm-2 control-label"><?php echo $_smarty_tpl->tpl_vars['_L']->value['p_concil_conciliation'];?>
+</label>
+                        <div class="col-sm-9">
+                            <div class="help-block" id="emptyOfx"><?php echo $_smarty_tpl->tpl_vars['_L']->value['p_concil_empty_ofx'];?>
+</div>
+                            <div id="transacoes"></div>
+                        </div>
+                    </div>                        
+
+                   
 
 
                     <div class="form-group">
-                        <div class="col-sm-offset-3 col-sm-9">
+                        <div class="col-sm-offset-6 col-sm-10">
                             <input type="hidden" name="attachments" id="attachments" value="">
+                            <input type="hidden" name="conciliated" id="conciliated" value="">
                             <button type="submit" id="submit" class="btn btn-primary"><i class="fa fa-check"></i> <?php echo $_smarty_tpl->tpl_vars['_L']->value['Submit'];?>
 </button>
                         </div>

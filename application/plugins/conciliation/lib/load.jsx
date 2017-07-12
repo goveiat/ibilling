@@ -18,7 +18,7 @@ class ItemConciliacao extends React.Component{
 	}
 
 	render(){
-		let {desc, ordem, valor, data, id} = this.props;
+		let {desc, ordem, valor, data, id, lang} = this.props;
 		let classe = Number(valor) > 0 ? 'text-success' : 'text-danger';
 		let classePanel = typeof this.props.conciliated == 'undefined' ? "info" : "warning";
 		return (
@@ -30,13 +30,13 @@ class ItemConciliacao extends React.Component{
 					  </div>
 					  <div className="panel-body">
 						<div className={`col-sm-12 ${classe}`}>
-						 	<span style={styles.label}>Valor: </span>R$ {valor.toFixed(2)}
+						 	<span style={styles.label}>{lang.p_concil_value}: </span>R$ {valor.toFixed(2)}
 						</div>
 						<div className="col-sm-12">
-							<span style={styles.label}>Data: </span>{data}
+							<span style={styles.label}>{lang.p_concil_date}: </span>{data}
 						</div>
 						<div className="col-sm-12">
-							<span style={styles.label}>Identificação: </span>{parseInt(id,10)}
+							<span style={styles.label}>{lang.p_concil_id}: </span>{parseInt(id,10)}
 						</div>
 					  </div>		  
 					</div>
@@ -49,6 +49,8 @@ class ItemConciliacao extends React.Component{
 
 
 	showConciliated(){
+		let {lang} = this.props;
+
 		if (typeof this.props.conciliated == 'undefined') {
 			return (
 				<div className="col-sm-6" >
@@ -65,7 +67,7 @@ class ItemConciliacao extends React.Component{
 						}}
 						onClick={() => {this.props.onConciliate(this.props.ordem)}}
 						className={`alert alert-${this.state.classe}`} style={{height: 133, textAlign: 'center', display: 'table', width:'100%', cursor: this.state.cursor}}>
-						<p style={{ display: 'table-cell', verticalAlign: 'middle' }}>Empty</p>
+						<p style={{ display: 'table-cell', verticalAlign: 'middle' }}>{lang.p_concil_empty}</p>
 					</div>
 				</div>
 			)
@@ -84,13 +86,13 @@ class ItemConciliacao extends React.Component{
 					  </div>
 					  <div className="panel-body">
 						<div className={`col-sm-12 ${classe}`}>
-						 	<span style={styles.label}>Value: </span>R$ {val.toFixed(2)}
+						 	<span style={styles.label}>{lang.p_concil_value}: </span>R$ {val.toFixed(2)}
 						</div>
 						<div className="col-sm-12">
-							<span style={styles.label}>Date: </span>{data}
+							<span style={styles.label}>{lang.p_concil_date}: </span>{data}
 						</div>
 						<div className="col-sm-12">
-							<span style={styles.label}>Identification: </span>{parseInt(item.id,10)}
+							<span style={styles.label}>{lang.p_concil_id}: </span>{parseInt(item.id,10)}
 						</div>
 					  </div>		  
 					</div>					
@@ -117,7 +119,7 @@ class ItemManual extends React.Component{
 	}
 	
 	render(){
-		let {desc, ordem, valor, data, id} = this.props;
+		let {desc, ordem, valor, data, id, lang} = this.props;
 		let classe = Number(valor) > 0 ? 'text-success' : 'text-danger';
 
 		return (			
@@ -140,13 +142,13 @@ class ItemManual extends React.Component{
 			  </div>
 			  <div className="panel-body">
 				<div className={`col-sm-12 ${classe}`}>
-				 	<span style={styles.label}>Value: </span>R$ {valor.toFixed(2)}
+				 	<span style={styles.label}>{lang.p_concil_value}: </span>R$ {valor.toFixed(2)}
 				</div>
 				<div className="col-sm-12">
-					<span style={styles.label}>Date: </span>{data}
+					<span style={styles.label}>{lang.p_concil_date}: </span>{data}
 				</div>
 				<div className="col-sm-12">
-					<span style={styles.label}>Identification: </span>{parseInt(id,10)}
+					<span style={styles.label}>{lang.p_concil_id}: </span>{parseInt(id,10)}
 				</div>
 			  </div>		  
 			</div>
@@ -191,23 +193,25 @@ class ListaConciliacao extends React.Component{
 
 
 	render(){	
+
+		let {lang} = this.props;
 		
 		return (
 			<section >
 			  <fieldset>
-			    <legend>Bank Statement</legend>
+			    <legend>{lang.p_concil_account_info}</legend>
 			    <div  style={styles.containerList}>
 				{this.loadBankStatement()}
 				</div>
 			  </fieldset>			
 			  <fieldset>
-			    <legend>Manual Entry</legend>
+			    <legend>{lang.p_concil_manual_t}</legend>
 				<div className="row" style={styles.containerList}>
 					{this.loadListTransManual()}
 				</div>
 			  </fieldset>	
 			  <fieldset>
-			    <legend>Bank Statement</legend>
+			    <legend>{lang.p_concil_bank_statement}</legend>
 				<div  style={styles.containerList}>
 					{this.loadListTransOfx()}
 				</div>
@@ -217,6 +221,8 @@ class ListaConciliacao extends React.Component{
 	}
 
 	loadBankStatement(){
+		let {lang} = this.props;
+
 		let {agencyNumber, accountNumber, balance, statement, bank} = this.props.ofx;
 		let start = statement.startDate.date.split(" ");
 					start = start[0].split("-");
@@ -228,25 +234,25 @@ class ListaConciliacao extends React.Component{
 		return (
 			<div className="row" style={{marginBottom: 20}}>
 				<div className="col-sm-4">
-					<span style={styles.label}>Agency Number: </span>{agencyNumber[0]}
+					<span style={styles.label}>{lang.p_concil_agency}: </span>{agencyNumber[0]}
 				</div>
 				<div className="col-sm-4">
-					<span style={styles.label}>Account Number: </span>{accountNumber[0]}
+					<span style={styles.label}>{lang.p_concil_account}: </span>{accountNumber[0]}
 				</div>	
 				<div className="col-sm-4">
-					<span style={styles.label}>Bank: </span>{bank[0]}
+					<span style={styles.label}>{lang.p_concil_bank}: </span>{bank[0]}
 				</div>				
 				<div className="col-sm-4">
-					<span style={styles.label}>Balance: </span>R$ {balance.toFixed(2)}
+					<span style={styles.label}>{lang.p_concil_balance}: </span>R$ {balance.toFixed(2)}
 				</div>
 				<div className="col-sm-4">
-					<span style={styles.label}>Start Date: </span>{start}
+					<span style={styles.label}>{lang.p_concil_start_date}: </span>{start}
 				</div>	
 				<div className="col-sm-4">
-					<span style={styles.label}>End Date: </span>{end}
+					<span style={styles.label}>{lang.p_concil_end_date}: </span>{end}
 				</div>	
 				<div className="col-sm-4">
-					<span style={styles.label}>Transactions: </span>{statement.transactions.length}
+					<span style={styles.label}>{lang.p_concil_transactions}: </span>{statement.transactions.length}
 				</div>
 			</div>
 		)
@@ -254,6 +260,7 @@ class ListaConciliacao extends React.Component{
 
 
 	loadListTransOfx(){
+		let {p_concil_value, p_concil_date, p_concil_id, p_concil_empty} = this.props.lang;
 		let {transactions} = this.props.ofx.statement;
 		let data = null;	
 		if(transactions.length > 0){
@@ -271,10 +278,11 @@ class ListaConciliacao extends React.Component{
 						desc={item.memo} 
 						conciliated={this.state.conciliated[k]}
 						onConciliate={(kOfx)=>{this.onConciliate(kOfx)}}
+						lang={{ p_concil_value, p_concil_date, p_concil_id, p_concil_empty}}
 					/>
 			});
 		}else{
-			return <div className="alert alert-danger">The .ofx file is invalid</div>
+			return <div className="alert alert-danger">{this.props.lang.p_concil_invalid_ofx}</div>
 		}
 	}
 
@@ -282,6 +290,8 @@ class ListaConciliacao extends React.Component{
 		let {transManual} = this.state;
 		let data = null;
 		let val = null;
+		let {p_concil_value, p_concil_date, p_concil_id} = this.props.lang;
+
 		if(transManual.length > 0){
 			return transManual.map((item, k) => {
 				if(!item){
@@ -300,13 +310,14 @@ class ListaConciliacao extends React.Component{
 							data={data}
 							id={item.id}
 							desc={item.description} 
+							lang={{ p_concil_value, p_concil_date, p_concil_id}}
 						/>
 					</div>
 				)
 					
 			});
 		}else{
-			return <div className="alert alert-danger">There are no manual changes regarding the period and account of this statement</div>
+			return <div className="alert alert-danger">{this.props.lang.p_concil_empty_manual}</div>
 		}
 	}	
 

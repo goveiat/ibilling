@@ -18,7 +18,9 @@ switch ($action) {
     case 'load':
         
         $ui->assign('_include','load');
+        $_L = array_merge($_L, $_L_CONCIL);
         $ui->assign('_L',$_L);
+        
 
         $css = Asset::css(array('dropzone/dropzone','modal'));
         $js = Asset::js(array('modal','dropzone/dropzone'));
@@ -84,11 +86,12 @@ switch ($action) {
 
                 $ret = [
                     success => true,
-                    msg => $_L[upload_success],
+                    msg => $_L_CONCIL[p_concil_upload_success],
                     file => $file,
                     ofx => $dados,
                     transManual => $trans,
-                    id=>$id
+                    id=>$id,
+                    lang => $_L_CONCIL
                 ];
 
             }catch(Exception $e){
@@ -111,7 +114,7 @@ switch ($action) {
         $conc = json_decode(_post('conciliated'));
 
         if($id == ''){
-           r2(U.'conciliation/init/load/','e','The Bank Statement upload is Required');
+           r2(U.'conciliation/init/load/','e',$_L_CONCIL[p_concil_req_ofx]);
         }
         
 
@@ -128,7 +131,7 @@ switch ($action) {
             ->find_one();
 
         if(!$conta){
-            r2(U.'conciliation/init/load/','e','The account of the statement is not registered');
+            r2(U.'conciliation/init/load/','e',$_L_CONCIL[p_concil_invalid_account]);
         }
            
         $msg = [
@@ -179,7 +182,9 @@ switch ($action) {
                 }               
             }
         }
-        $info = $msg['conc'].' concilied records, '.$msg['novos'].' new records ans '. $msg['exist'].' existing records.';
+        $info = $msg['conc'].$_L_CONCIL[p_concil_r_conciliated].' | '.
+                $msg['novos'].$_L_CONCIL[p_concil_r_new].' | '. 
+                $msg['exist'].$_L_CONCIL[p_concil_r_exist];
         r2(U.'conciliation/init/load/','s',$info);
     break;
     default:
